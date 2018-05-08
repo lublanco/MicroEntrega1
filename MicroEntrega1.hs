@@ -41,11 +41,16 @@ lodv valor = incrementarPc.(cargarUnValorEnElAcumuladorA valor)
 cargarUnValorEnElAcumuladorA :: Int->NuevoMicroprocesador 
 cargarUnValorEnElAcumuladorA  valor unMicroprocesador = unMicroprocesador{acumuladorA = valor}
 
+
+cargarUnValorEnElAcumuladorB :: Int->NuevoMicroprocesador 
+cargarUnValorEnElAcumuladorB  valor unMicroprocesador = unMicroprocesador{acumuladorB = valor}
+
+
 lod :: Int->NuevoMicroprocesador
-lod numero = incrementarPc.(cargarElContenidoDeDatosEnAcumuladorA numero)
+lod posicion = incrementarPc.(cargarElContenidoDeDatosEnAcumuladorA posicion)
 
 cargarElContenidoDeDatosEnAcumuladorA :: Int -> NuevoMicroprocesador 
-cargarElContenidoDeDatosEnAcumuladorA numero unMicroprocesador = unMicroprocesador {acumuladorA = head (recortarPosicionesMenosUno numero  unMicroprocesador)}
+cargarElContenidoDeDatosEnAcumuladorA numero unMicroprocesador =  unMicroprocesador {acumuladorA = head (recortarPosicionesMenosUno numero  unMicroprocesador)}
 
 recortarPosicionesMenosUno :: Int -> Microprocesador -> [Int]
 recortarPosicionesMenosUno numero  unMicroprocesador = drop (numero - 1) (datos unMicroprocesador)
@@ -103,7 +108,6 @@ programaParaDividir numerador denominador
 
 -----------------------------------------------------------------------------------------------------------
 {-Accessors 
-
 programCounter (Microprocesador _ _ pc _ _) = pc                                                                     
   
 acumuladorA (Microprocesador acumuladorA _ _ _ _) = acumuladorA      
@@ -113,6 +117,4 @@ acumuladorB (Microprocesador _ acumuladorB _ _ _) = acumuladorB
 memoria (Microprocesador _ _ _ posicion _) = posicion    
   
 mensajeError(Microprocesador _ _ _ _ errores) = errores  
-
 -}
-
