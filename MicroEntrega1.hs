@@ -33,8 +33,8 @@ swap:: NuevoMicroprocesador
 swap = incrementarPc.intercambiarValores  
 
 intercambiarValores :: NuevoMicroprocesador
-intercambiarValores unMicroprocesador = unMicroprocesador {acumuladorA = acumuladorB unMicroprocesador, acumuladorB = acumuladorA unMicroprocesador}                                                 
-
+intercambiarValores unMicroprocesador = ((cargarUnValorEnElAcumuladorB acumuladorA unMicroprocesador).cargarUnValorEnElAcumuladorA (acumuladorB unMicroprocesador)) unMicroprocesador 
+										  
 lodv :: Int-> NuevoMicroprocesador
 lodv valor = incrementarPc.(cargarUnValorEnElAcumuladorA valor)
 
@@ -50,10 +50,7 @@ lod :: Int->NuevoMicroprocesador
 lod posicion = incrementarPc.(cargarElContenidoDeDatosEnAcumuladorA posicion)
 
 cargarElContenidoDeDatosEnAcumuladorA :: Int -> NuevoMicroprocesador 
-cargarElContenidoDeDatosEnAcumuladorA numero unMicroprocesador =  unMicroprocesador {acumuladorA = head (recortarPosicionesMenosUno numero  unMicroprocesador)}
-
-recortarPosicionesMenosUno :: Int -> Microprocesador -> [Int]
-recortarPosicionesMenosUno numero  unMicroprocesador = drop (numero - 1) (datos unMicroprocesador)
+cargarElContenidoDeDatosEnAcumuladorA posicion unMicroprocesador =  cargarUnValorEnElAcumuladorA  ((!!) (datos unMicroprocesador) posicion  ) unMicroprocesador
 
 str :: Int->Int->NuevoMicroprocesador
 str posicion valor = incrementarPc.(guardaElValorEnLaPosicion posicion valor)
