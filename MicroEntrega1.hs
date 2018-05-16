@@ -25,11 +25,12 @@ at8086 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc 
  
 fp20 = UnMicroprocesador {acumuladorA = 7, acumuladorB = 24, programa = [], pc = 0, datos = [], ultimoError = ""} 
 
-microDesorden = UnMicroprocesador { acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [2,5,1,0,6,9], ultimoError = ""}      
+microDesorden = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [2,5,1,0,6,9], ultimoError = ""} 
+
+microConMemoriaInfinita = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [0,0..], ultimoError = ""} 
 
 
-
--- Instrucciones  
+--Instrucciones  
 
 
 nop :: NuevoMicroprocesador 
@@ -81,7 +82,7 @@ cargarPrograma :: Programa -> NuevoMicroprocesador
 cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = programaAAgregar : programa unMicroprocesador }
 
 memoriaOrdenada :: Microprocesador -> String
-memoriaOrdenada unMicroprocesador = mostrarCadena (listaOrdenada (datos unMicroprocesador))
+memoriaOrdenada unMicroprocesador = mostrarCadena(listaOrdenada (datos unMicroprocesador))
 
 
 --Otras funciones
@@ -124,7 +125,7 @@ listaOrdenada [_] = True
 listaOrdenada (x:y:xs) = (x<=y) && listaOrdenada (y:xs)
     
 
--- Programas      
+--Programas      
   
   
 avanzarTresPosicionesPc :: NuevoMicroprocesador
