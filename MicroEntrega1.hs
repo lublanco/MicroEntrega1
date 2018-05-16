@@ -1,7 +1,6 @@
 module MicroEntrega1 where
 import Text.Show.Functions
 
-
 --Tipos 
     
 	
