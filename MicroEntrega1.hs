@@ -1,18 +1,22 @@
 module MicroEntrega1 where
+import Text.Show.Functions
 
+--Data  
+                                                                                                             
+type Programa = Int -> Int-> NuevoMicroprocesador
 
---Data                                                                                                               
-
-data Microprocesador = UnMicroprocesador {acumuladorA :: Int, acumuladorB :: Int, pc :: Int, datos :: [Int], ultimoError :: String }  deriving Show
+data Microprocesador = UnMicroprocesador {acumuladorA :: Int, acumuladorB :: Int, pc :: Int, datos :: [Int], ultimoError :: String, programa :: [Programa]}  deriving (Show)
 
 
 
 --Microprocesadores                                                                        
-xt8088 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, pc = 0, datos = [], ultimoError = ""}       
+xt8088 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [], ultimoError = ""}       
 
-at8086 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, pc = 0, datos = [1..20], ultimoError = ""}  
+at8086 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [1..20], ultimoError = ""}  
  
-fp20 = UnMicroprocesador {acumuladorA = 7, acumuladorB = 24, pc = 0, datos = [], ultimoError = ""}        
+fp20 = UnMicroprocesador {acumuladorA = 7, acumuladorB = 24, programa = [], pc = 0, datos = [], ultimoError = ""} 
+
+microDesorden = UnMicroprocesador { acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [2,5,1,0,6,9], ultimoError = ""}      
 
 
 
@@ -55,10 +59,10 @@ lod posicion unMicroprocesador
 cargarElContenidoDeDatosEnAcumuladorA :: Int -> NuevoMicroprocesador 
 cargarElContenidoDeDatosEnAcumuladorA posicion unMicroprocesador =  cargarUnValorEnElAcumuladorA  ((!!) (datos unMicroprocesador) posicion  ) unMicroprocesador
 
-str :: Int->Int->NuevoMicroprocesador
+str :: Programa
 str posicion valor = incrementarPc.(guardaElValorEnLaPosicion posicion valor)
 
-guardaElValorEnLaPosicion :: Int->Int->NuevoMicroprocesador
+guardaElValorEnLaPosicion :: Programa
 guardaElValorEnLaPosicion posicion valor unMicroprocesador = unMicroprocesador {datos = (primeraParteDeLosDatos (posicion) (datos unMicroprocesador)) ++ (segundaParteDeLosDatos posicion valor (datos unMicroprocesador))}
 
 divide :: NuevoMicroprocesador
@@ -66,6 +70,11 @@ divide unMicroprocesador
    | acumuladorB unMicroprocesador == 0 = agregarErrorBy0 unMicroprocesador
    | otherwise = (incrementarPc.dividirAcumuladores) unMicroprocesador
 
+cargarPrograma :: Programa -> NuevoMicroprocesador
+cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = programaAAgregar : programa unMicroprocesador }
+
+memoriaOrdenada :: Microprocesador -> String
+memoriaOrdenada unMicroprocesador = mostrarCadena (listaOrdenada (datos unMicroprocesador))
 
 
 --Otras funciones
@@ -83,7 +92,6 @@ dividirAcumuladores unMicroprocesador =  unMicroprocesador{acumuladorA = div (ac
 antesDeDividir ::Int->Int->NuevoMicroprocesador
 antesDeDividir numerador denominador = (lod 1).swap.(lod 2).(str 2 denominador).(str 1 numerador) 
 
-
 agregarErrorBy0 :: NuevoMicroprocesador
 agregarErrorBy0 unMicroprocesador = unMicroprocesador {ultimoError = "ERROR DIVISION BY ZERO" }
 
@@ -99,32 +107,24 @@ primeraParteDeLosDatos posicion lista = take (posicion - 1) (lista)
 segundaParteDeLosDatos :: Int -> Int -> [Int] -> [Int]
 segundaParteDeLosDatos posicion valor lista = valor:(drop (posicion) (lista))
 
-memoriaOrdenada :: Microprocesador -> String
-memoriaOrdenada unMicroprocesador = listaOrdenada (datos unMicroprocesador)
+mostrarCadena :: Bool -> String
+mostrarCadena False = "Memoria desordenada"
+mostrarCadena True = "Memoria Ordenada" 
 
-listaOrdenada:: [Int] -> String
-listaOrdenada lista = mostrarTipoDeLista (indecxarTiposDeListas lista)
-
-mostrarTipoDeLista :: Int -> String
-mostrarTipoDeLista 1 = "Memoria Vacia"
-mostrarTipoDeLista  2 = "Memoria Desordenada"
-mostrarTipoDeLista  _ = "Memoria Ordenada"
-
-indecxarTiposDeListas :: [Int] -> Int
-indecxarTiposDeListas [] = 1
-indecxarTiposDeListas [x] = x
-indecxarTiposDeListas (x:xs)
- | x <= cola = cola
- | otherwise = (2)
- where cola = indecxarTiposDeListas xs 
+listaOrdenada :: [Int]->Bool
+listaOrdenada [] = True
+listaOrdenada [_] = True
+listaOrdenada (x:y:xs) = (x<=y) && listaOrdenada (y:xs)
+ 
+    
 
 -- Programas      
                                                                 
 avanzarTresPosicionesPc :: NuevoMicroprocesador
 avanzarTresPosicionesPc = nop.nop.nop                                                 
 
-programaParaSumar :: Int -> Int-> NuevoMicroprocesador
+programaParaSumar :: Programa 
 programaParaSumar  valor1 valor2 = add.(lodv valor1).(sumarValores valor2) 
 
-programaParaDividir ::Int->Int->NuevoMicroprocesador
+programaParaDividir :: Programa 
 programaParaDividir numerador denominador = divide.(antesDeDividir numerador denominador)
