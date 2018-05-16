@@ -1,9 +1,10 @@
 module MicroEntrega1 where
 import Text.Show.Functions
 
+
 --Tipos 
     
-	
+
 type Programa = Int -> Int -> NuevoMicroprocesador
 type NuevoMicroprocesador = Microprocesador -> Microprocesador
 
@@ -17,7 +18,7 @@ data Microprocesador = UnMicroprocesador {acumuladorA :: Int, acumuladorB :: Int
 
 --Microprocesadores    
            
-		   
+
 xt8088 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [], ultimoError = ""}       
 
 at8086 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [1..20], ultimoError = ""}  
