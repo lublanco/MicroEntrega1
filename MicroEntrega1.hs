@@ -61,7 +61,7 @@ str posicion valor = incrementarPc.(guardaElValorEnLaPosicion posicion valor)
 guardaElValorEnLaPosicion :: Int->Int->NuevoMicroprocesador
 guardaElValorEnLaPosicion posicion valor unMicroprocesador = unMicroprocesador {datos = (primeraParteDeLosDatos (posicion) (datos unMicroprocesador)) ++ (segundaParteDeLosDatos posicion valor (datos unMicroprocesador))}
 
-
+divide :: NuevoMicroprocesador
 divide unMicroprocesador
    | acumuladorB unMicroprocesador == 0 = agregarErrorBy0 unMicroprocesador
    | otherwise = (incrementarPc.dividirAcumuladores) unMicroprocesador
