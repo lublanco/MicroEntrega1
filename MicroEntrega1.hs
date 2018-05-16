@@ -99,6 +99,25 @@ primeraParteDeLosDatos posicion lista = take (posicion - 1) (lista)
 segundaParteDeLosDatos :: Int -> Int -> [Int] -> [Int]
 segundaParteDeLosDatos posicion valor lista = valor:(drop (posicion) (lista))
 
+memoriaOrdenada :: Microprocesador -> String
+memoriaOrdenada unMicroprocesador = listaOrdenada (datos unMicroprocesador)
+
+listaOrdenada:: [Int] -> String
+listaOrdenada lista = mostrarTipoDeLista (indecxarTiposDeListas lista)
+
+mostrarTipoDeLista :: Int -> String
+mostrarTipoDeLista 1 = "Memoria Vacia"
+mostrarTipoDeLista  2 = "Memoria Desordenada"
+mostrarTipoDeLista  _ = "Memoria Ordenada"
+
+indecxarTiposDeListas :: [Int] -> Int
+indecxarTiposDeListas [] = 1
+indecxarTiposDeListas [x] = x
+indecxarTiposDeListas (x:xs)
+ | x <= cola = cola
+ | otherwise = (2)
+ where cola = indecxarTiposDeListas xs 
+
 -- Programas      
                                                                 
 avanzarTresPosicionesPc :: NuevoMicroprocesador
