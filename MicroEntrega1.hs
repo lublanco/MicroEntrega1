@@ -79,7 +79,7 @@ divide unMicroprocesador
    | otherwise = (incrementarPc.dividirAcumuladores) unMicroprocesador
 
 cargarPrograma :: Programa -> NuevoMicroprocesador
-cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = programaAAgregar : programa unMicroprocesador }
+cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = [programaAAgregar]}
 
 memoriaOrdenada :: Microprocesador -> String
 memoriaOrdenada unMicroprocesador = mostrarCadena(listaOrdenada (datos unMicroprocesador))
