@@ -5,7 +5,7 @@ import Text.Show.Functions
 --Tipos 
     
 
-type Programa = Int -> Int -> NuevoMicroprocesador
+type Programa = Microprocesador -> Microprocesador
 type NuevoMicroprocesador = Microprocesador -> Microprocesador
 
 
@@ -34,22 +34,30 @@ microConMemoriaInfinita = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, p
 
 
 nop :: NuevoMicroprocesador 
-nop = incrementarPc                                                                 
+nop unMicroprocesador
+   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | otherwise = incrementarPc unMicroprocesador                                                                 
 
 add :: NuevoMicroprocesador
-add = incrementarPc.sumarAcumuladores    
+add unMicroprocesador
+   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | otherwise = (incrementarPc.sumarAcumuladores) unMicroprocesador    
 
 sumarAcumuladores :: NuevoMicroprocesador
 sumarAcumuladores unMicroprocesador = unMicroprocesador{acumuladorA = acumuladorA unMicroprocesador + acumuladorB unMicroprocesador, acumuladorB = 0}                                                        
 
 swap :: NuevoMicroprocesador
-swap = incrementarPc.intercambiarValores  
+swap unMicroprocesador
+   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | otherwise = (incrementarPc.intercambiarValores) unMicroprocesador  
 
 intercambiarValores :: NuevoMicroprocesador
 intercambiarValores unMicroprocesador = cargarUnValorEnElAcumuladorB (acumuladorA unMicroprocesador) (cargarUnValorEnElAcumuladorA (acumuladorB unMicroprocesador) unMicroprocesador) 
 
 lodv :: Int -> NuevoMicroprocesador
-lodv valor = incrementarPc.(cargarUnValorEnElAcumuladorA valor)
+lodv valor unMicroprocesador
+   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | otherwise = (incrementarPc.(cargarUnValorEnElAcumuladorA valor)) unMicroprocesador
 
 cargarUnValorEnElAcumuladorA :: Int -> NuevoMicroprocesador 
 cargarUnValorEnElAcumuladorA  valor unMicroprocesador = unMicroprocesador{acumuladorA = valor}
@@ -60,26 +68,33 @@ cargarUnValorEnElAcumuladorB  valor unMicroprocesador = unMicroprocesador{acumul
 
 lod :: Int -> NuevoMicroprocesador
 lod posicion unMicroprocesador
+   | ultimoError unMicroprocesador /= "" = unMicroprocesador
    | datos unMicroprocesador == [] = memoriaVacia unMicroprocesador
    | otherwise = (incrementarPc.cargarElContenidoDeDatosEnAcumuladorA posicion) unMicroprocesador
 
 cargarElContenidoDeDatosEnAcumuladorA :: Int -> NuevoMicroprocesador 
 cargarElContenidoDeDatosEnAcumuladorA posicion unMicroprocesador =  cargarUnValorEnElAcumuladorA  ((!!) (datos unMicroprocesador) posicion  ) unMicroprocesador
 
-str :: Programa
-str posicion valor = incrementarPc.(guardaElValorEnLaPosicion posicion valor)
+str :: Int -> Int -> NuevoMicroprocesador
+str posicion valor unMicroprocesador
+   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | otherwise = (incrementarPc.(guardaElValorEnLaPosicion posicion valor)) unMicroprocesador
 
-guardaElValorEnLaPosicion :: Programa
+guardaElValorEnLaPosicion :: Int -> Int -> NuevoMicroprocesador
 guardaElValorEnLaPosicion posicion valor unMicroprocesador = unMicroprocesador {datos = (primeraParteDeLosDatos (posicion) (datos unMicroprocesador)) ++ (segundaParteDeLosDatos posicion valor (datos unMicroprocesador))}
 
 
 divide :: NuevoMicroprocesador
 divide unMicroprocesador
-   | acumuladorB unMicroprocesador == 0 = agregarErrorBy0 unMicroprocesador
+   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | acumuladorB unMicroprocesador == 0 = (incrementarPc.agregarErrorBy0) unMicroprocesador
    | otherwise = (incrementarPc.dividirAcumuladores) unMicroprocesador
 
-cargarPrograma :: Programa -> NuevoMicroprocesador
-cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = [programaAAgregar]}
+cargarPrograma :: NuevoMicroprocesador  -> NuevoMicroprocesador
+cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = programaAAgregar : programa unMicroprocesador }
+
+ejecutarPrograma :: Int->NuevoMicroprocesador
+ejecutarPrograma  ubicacionDelPrograma unMicroprocesador= ((!!) (programa unMicroprocesador) ubicacionDelPrograma) unMicroprocesador
 
 memoriaOrdenada :: Microprocesador -> String
 memoriaOrdenada unMicroprocesador = mostrarCadena(listaOrdenada (datos unMicroprocesador))
@@ -97,13 +112,13 @@ sumarValores  valor = swap.(lodv valor)
 dividirAcumuladores :: NuevoMicroprocesador
 dividirAcumuladores unMicroprocesador =  unMicroprocesador{acumuladorA = div (acumuladorA unMicroprocesador) (acumuladorB unMicroprocesador), acumuladorB =0 }
 
-antesDeDividir :: Programa
+antesDeDividir :: Int -> Int -> NuevoMicroprocesador
 antesDeDividir numerador denominador = (lod 1).swap.(lod 2).(str 2 denominador).(str 1 numerador) 
 
 agregarErrorBy0 :: NuevoMicroprocesador
 agregarErrorBy0 unMicroprocesador = unMicroprocesador {ultimoError = "ERROR DIVISION BY ZERO" }
 
-resultadoDeDividirPor0 :: Programa
+resultadoDeDividirPor0 :: Int -> Int -> NuevoMicroprocesador
 resultadoDeDividirPor0 numerador denominador = incrementarPc.agregarErrorBy0.(antesDeDividir numerador denominador)
 
 memoriaVacia :: NuevoMicroprocesador
@@ -131,8 +146,8 @@ listaOrdenada (x:y:xs) = (x<=y) && listaOrdenada (y:xs)
 avanzarTresPosicionesPc :: NuevoMicroprocesador
 avanzarTresPosicionesPc = nop.nop.nop                                                 
 
-programaParaSumar :: Programa 
+programaParaSumar :: Int -> Int -> NuevoMicroprocesador 
 programaParaSumar  valor1 valor2 = add.(lodv valor1).(sumarValores valor2) 
 
-programaParaDividir :: Programa 
+programaParaDividir :: Int -> Int -> NuevoMicroprocesador 
 programaParaDividir numerador denominador = divide.(antesDeDividir numerador denominador)
