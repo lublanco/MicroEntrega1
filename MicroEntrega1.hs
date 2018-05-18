@@ -100,6 +100,11 @@ cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa 
 ejecutarPrograma :: NuevoMicroprocesador
 ejecutarPrograma unMicroprocesador = (programa unMicroprocesador) unMicroprocesador
 
+ifnz :: NuevoMicroprocesador -> NuevoMicroprocesador -> NuevoMicroprocesador
+ifnz instruccion1 instruccion2 unMicroprocesador
+   | acumuladorA unMicroprocesador == 0 = unMicroprocesador
+   | otherwise = (instruccion2.instruccion1) unMicroprocesador
+
 
 --Otras funciones
 
@@ -169,3 +174,5 @@ programaParaDividir numerador denominador = divide.(antesDeDividir numerador den
 -- lod 2 (divide (lodv 2 xt8088))
 
 -- divide (lod 2 (divide (nop xt8088)))
+
+-- ifnz (lodv 3) (swap) fp20
