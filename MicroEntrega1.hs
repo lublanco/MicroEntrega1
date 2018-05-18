@@ -35,12 +35,12 @@ microConMemoriaInfinita = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, p
 
 nop :: NuevoMicroprocesador 
 nop unMicroprocesador
-   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | errorEnElMicro unMicroprocesador = unMicroprocesador
    | otherwise = incrementarPc unMicroprocesador                                                                 
 
 add :: NuevoMicroprocesador
 add unMicroprocesador
-   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | errorEnElMicro unMicroprocesador = unMicroprocesador
    | otherwise = (incrementarPc.sumarAcumuladores) unMicroprocesador    
 
 sumarAcumuladores :: NuevoMicroprocesador
@@ -48,7 +48,7 @@ sumarAcumuladores unMicroprocesador = unMicroprocesador{acumuladorA = acumulador
 
 swap :: NuevoMicroprocesador
 swap unMicroprocesador
-   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | errorEnElMicro unMicroprocesador = unMicroprocesador
    | otherwise = (incrementarPc.intercambiarValores) unMicroprocesador  
 
 intercambiarValores :: NuevoMicroprocesador
@@ -56,7 +56,7 @@ intercambiarValores unMicroprocesador = cargarUnValorEnElAcumuladorB (acumulador
 
 lodv :: Int -> NuevoMicroprocesador
 lodv valor unMicroprocesador
-   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | errorEnElMicro unMicroprocesador = unMicroprocesador
    | otherwise = (incrementarPc.(cargarUnValorEnElAcumuladorA valor)) unMicroprocesador
 
 cargarUnValorEnElAcumuladorA :: Int -> NuevoMicroprocesador 
@@ -68,7 +68,7 @@ cargarUnValorEnElAcumuladorB  valor unMicroprocesador = unMicroprocesador{acumul
 
 lod :: Int -> NuevoMicroprocesador
 lod posicion unMicroprocesador
-   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | errorEnElMicro unMicroprocesador = unMicroprocesador
    | datos unMicroprocesador == [] = memoriaVacia unMicroprocesador
    | otherwise = (incrementarPc.cargarElContenidoDeDatosEnAcumuladorA posicion) unMicroprocesador
 
@@ -77,7 +77,7 @@ cargarElContenidoDeDatosEnAcumuladorA posicion unMicroprocesador =  cargarUnValo
 
 str :: Int -> Int -> NuevoMicroprocesador
 str posicion valor unMicroprocesador
-   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | errorEnElMicro unMicroprocesador = unMicroprocesador
    | otherwise = (incrementarPc.(guardaElValorEnLaPosicion posicion valor)) unMicroprocesador
 
 guardaElValorEnLaPosicion :: Int -> Int -> NuevoMicroprocesador
@@ -86,7 +86,7 @@ guardaElValorEnLaPosicion posicion valor unMicroprocesador = unMicroprocesador {
 
 divide :: NuevoMicroprocesador
 divide unMicroprocesador
-   | ultimoError unMicroprocesador /= "" = unMicroprocesador
+   | errorEnElMicro unMicroprocesador = unMicroprocesador
    | acumuladorB unMicroprocesador == 0 = (incrementarPc.agregarErrorBy0) unMicroprocesador
    | otherwise = (incrementarPc.dividirAcumuladores) unMicroprocesador
 
@@ -129,6 +129,9 @@ primeraParteDeLosDatos posicion lista = take (posicion - 1) (lista)
 
 segundaParteDeLosDatos :: Int -> Int -> [Int] -> [Int]
 segundaParteDeLosDatos posicion valor lista = valor:(drop (posicion) (lista))
+
+errorEnElMicro :: Microprocesador -> Bool
+errorEnElMicro unMicroprocesador = ultimoError unMicroprocesador /= ""
 
 mostrarCadena :: Bool -> String
 mostrarCadena False = "Memoria desordenada"
