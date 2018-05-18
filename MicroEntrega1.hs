@@ -12,22 +12,22 @@ type NuevoMicroprocesador = Microprocesador -> Microprocesador
 --Data
 
 
-data Microprocesador = UnMicroprocesador {acumuladorA :: Int, acumuladorB :: Int, programa :: [Programa], pc :: Int, datos :: [Int], ultimoError :: String}  deriving (Show)
+data Microprocesador = UnMicroprocesador {acumuladorA :: Int, acumuladorB :: Int, programa :: Programa, pc :: Int, datos :: [Int], ultimoError :: String}  deriving (Show)
 
 
 
 --Microprocesadores    
            
 
-xt8088 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [], ultimoError = ""}       
+xt8088 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = programaVacio, pc = 0, datos = [], ultimoError = ""}       
 
-at8086 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [1..20], ultimoError = ""}  
+at8086 = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = programaVacio, pc = 0, datos = [1..20], ultimoError = ""}  
  
-fp20 = UnMicroprocesador {acumuladorA = 7, acumuladorB = 24, programa = [], pc = 0, datos = [], ultimoError = ""} 
+fp20 = UnMicroprocesador {acumuladorA = 7, acumuladorB = 24, programa = programaVacio, pc = 0, datos = [], ultimoError = ""} 
 
-microDesorden = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [2,5,1,0,6,9], ultimoError = ""} 
+microDesorden = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = programaVacio, pc = 0, datos = [2,5,1,0,6,9], ultimoError = ""} 
 
-microConMemoriaInfinita = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = [], pc = 0, datos = [0,0..], ultimoError = ""} 
+microConMemoriaInfinita = UnMicroprocesador {acumuladorA = 0, acumuladorB = 0, programa = programaVacio, pc = 0, datos = [0,0..], ultimoError = ""} 
 
 
 --Instrucciones  
@@ -90,14 +90,15 @@ divide unMicroprocesador
    | acumuladorB unMicroprocesador == 0 = (incrementarPc.agregarErrorBy0) unMicroprocesador
    | otherwise = (incrementarPc.dividirAcumuladores) unMicroprocesador
 
-cargarPrograma :: NuevoMicroprocesador  -> NuevoMicroprocesador
-cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = programaAAgregar : programa unMicroprocesador }
-
-ejecutarPrograma :: Int->NuevoMicroprocesador
-ejecutarPrograma  ubicacionDelPrograma unMicroprocesador = ((!!) (programa unMicroprocesador) (ubicacionDelPrograma - 1)) unMicroprocesador
 
 memoriaOrdenada :: Microprocesador -> String
 memoriaOrdenada unMicroprocesador = mostrarCadena(listaOrdenada (datos unMicroprocesador))
+
+cargarPrograma :: Programa -> NuevoMicroprocesador
+cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = programaAAgregar}
+
+ejecutarPrograma :: NuevoMicroprocesador
+ejecutarPrograma unMicroprocesador = (programa unMicroprocesador) unMicroprocesador
 
 
 --Otras funciones
@@ -133,6 +134,9 @@ segundaParteDeLosDatos posicion valor lista = valor:(drop (posicion) (lista))
 errorEnElMicro :: Microprocesador -> Bool
 errorEnElMicro unMicroprocesador = ultimoError unMicroprocesador /= ""
 
+programaVacio :: Programa
+programaVacio unMicroprocesador = unMicroprocesador
+
 mostrarCadena :: Bool -> String
 mostrarCadena False = "Memoria desordenada"
 mostrarCadena True = "Memoria Ordenada" 
@@ -141,7 +145,7 @@ listaOrdenada :: [Int] -> Bool
 listaOrdenada [] = True
 listaOrdenada [_] = True
 listaOrdenada (x:y:xs) = (x<=y) && listaOrdenada (y:xs)
-    
+ 
 
 --Programas      
   
@@ -158,17 +162,9 @@ programaParaDividir numerador denominador = divide.(antesDeDividir numerador den
 
 --Pruebas
 
--- ejecutarPrograma 1 (cargarPrograma (programaParaSumar 10 22) xt8088)
+-- ejecutarPrograma (cargarPrograma (programaParaSumar 10 22) xt8088)
 
--- ejecutarPrograma 1 (cargarPrograma (programaParaDividir 2 0) xt8088)
-
--- cargarPrograma (programaParaDividir 2 0)  (cargarPrograma (programaParaSumar 10 22) xt8088)
-
--- cargarPrograma (programaParaSumar 10 22)  (cargarPrograma (programaParaDividir 2 0) xt8088)
-
--- ejecutarPrograma 1 (cargarPrograma (programaParaDividir 2 0)  (cargarPrograma (programaParaSumar 10 22) xt8088))
-
--- ejecutarPrograma 2 (cargarPrograma (programaParaSumar 10 22)  (cargarPrograma (programaParaDividir 2 0) xt8088))
+-- ejecutarPrograma (cargarPrograma (programaParaDividir 2 0) xt8088)
 
 -- lod 2 (divide (lodv 2 xt8088))
 
