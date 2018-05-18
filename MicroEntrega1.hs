@@ -73,7 +73,7 @@ lod posicion unMicroprocesador
    | otherwise = (incrementarPc.cargarElContenidoDeDatosEnAcumuladorA posicion) unMicroprocesador
 
 cargarElContenidoDeDatosEnAcumuladorA :: Int -> NuevoMicroprocesador 
-cargarElContenidoDeDatosEnAcumuladorA posicion unMicroprocesador =  cargarUnValorEnElAcumuladorA  ((!!) (datos unMicroprocesador) posicion  ) unMicroprocesador
+cargarElContenidoDeDatosEnAcumuladorA posicion unMicroprocesador =  cargarUnValorEnElAcumuladorA  ((!!) (datos unMicroprocesador) (posicion - 1)) unMicroprocesador
 
 str :: Int -> Int -> NuevoMicroprocesador
 str posicion valor unMicroprocesador
@@ -94,7 +94,7 @@ cargarPrograma :: NuevoMicroprocesador  -> NuevoMicroprocesador
 cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = programaAAgregar : programa unMicroprocesador }
 
 ejecutarPrograma :: Int->NuevoMicroprocesador
-ejecutarPrograma  ubicacionDelPrograma unMicroprocesador= ((!!) (programa unMicroprocesador) ubicacionDelPrograma) unMicroprocesador
+ejecutarPrograma  ubicacionDelPrograma unMicroprocesador = ((!!) (programa unMicroprocesador) (ubicacionDelPrograma - 1)) unMicroprocesador
 
 memoriaOrdenada :: Microprocesador -> String
 memoriaOrdenada unMicroprocesador = mostrarCadena(listaOrdenada (datos unMicroprocesador))
@@ -151,3 +151,22 @@ programaParaSumar  valor1 valor2 = add.(lodv valor1).(sumarValores valor2)
 
 programaParaDividir :: Int -> Int -> NuevoMicroprocesador 
 programaParaDividir numerador denominador = divide.(antesDeDividir numerador denominador)
+
+
+--Pruebas
+
+-- ejecutarPrograma 1 (cargarPrograma (programaParaSumar 10 22) xt8088)
+
+-- ejecutarPrograma 1 (cargarPrograma (programaParaDividir 2 0) xt8088)
+
+-- cargarPrograma (programaParaDividir 2 0)  (cargarPrograma (programaParaSumar 10 22) xt8088)
+
+-- cargarPrograma (programaParaSumar 10 22)  (cargarPrograma (programaParaDividir 2 0) xt8088)
+
+-- ejecutarPrograma 1 (cargarPrograma (programaParaDividir 2 0)  (cargarPrograma (programaParaSumar 10 22) xt8088))
+
+-- ejecutarPrograma 2 (cargarPrograma (programaParaSumar 10 22)  (cargarPrograma (programaParaDividir 2 0) xt8088))
+
+-- lod 2 (divide (lodv 2 xt8088))
+
+-- divide (lod 2 (divide (nop xt8088)))
