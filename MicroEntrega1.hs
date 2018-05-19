@@ -92,7 +92,7 @@ divide unMicroprocesador
 
 
 memoriaOrdenada :: Microprocesador -> String
-memoriaOrdenada unMicroprocesador = mostrarCadena(listaOrdenada (datos unMicroprocesador))
+memoriaOrdenada unMicroprocesador = mostrarComentario (listaOrdenada (datos unMicroprocesador))
 
 cargarPrograma :: Programa -> NuevoMicroprocesador
 cargarPrograma programaAAgregar unMicroprocesador = unMicroprocesador {programa = programaAAgregar}
@@ -142,9 +142,10 @@ errorEnElMicro unMicroprocesador = ultimoError unMicroprocesador /= ""
 programaVacio :: Programa
 programaVacio unMicroprocesador = unMicroprocesador
 
-mostrarCadena :: Bool -> String
-mostrarCadena False = "Memoria desordenada"
-mostrarCadena True = "Memoria Ordenada" 
+mostrarComentario :: Bool -> String
+mostrarComentario True = "Memoria Ordenada" 
+mostrarComentario False = "Memoria desordenada"
+
 
 listaOrdenada :: [Int] -> Bool
 listaOrdenada [] = True
