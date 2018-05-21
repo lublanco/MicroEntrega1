@@ -99,15 +99,14 @@ ejecutarPrograma unMicroprocesador = (programa unMicroprocesador) unMicroprocesa
 ifnz :: Instruccion -> Instruccion
 ifnz conjuntoDeInstrucciones unMicroprocesador
    | acumuladorA unMicroprocesador == 0 = unMicroprocesador
-   | otherwise                          = conjuntoDeInstrucciones unMicroprocesador
+   | otherwise                          = (ejecutarPrograma.conjuntoDeInstrucciones) unMicroprocesador 
 
 memoriaOrdenada :: Microprocesador -> String
 memoriaOrdenada = mostrarComentario.listaOrdenada.accessorDatos
 
-accessorDatos :: Microprocesador -> [Int]
-accessorDatos (UnMicroprocesador _ _ _ _ datos _) = datos 
 
-accessorAcumuladorA (UnMicroprocesador acumuladorA _ _ _  _ _) = acumuladorA 
+
+
 
 --Otras funciones
 
@@ -154,6 +153,15 @@ listaOrdenada [] = True
 listaOrdenada [_] = True
 listaOrdenada (primerElemento : segundoElemento : cola) = (primerElemento <= segundoElemento) && listaOrdenada (segundoElemento : cola)
  
+accessorDatos :: Microprocesador -> [Int]
+accessorDatos (UnMicroprocesador _ _ _ _ datos _) = datos 
+
+accessorAcumuladorA :: Microprocesador -> Int
+accessorAcumuladorA (UnMicroprocesador acumuladorA _ _ _  _ _) = acumuladorA 
+
+accessorAcumuladorB :: Microprocesador -> Int
+accessorAcumuladorB (UnMicroprocesador _ acumuladorB _ _ _ _) = acumuladorB
+ 
 
 --Programas      
   
@@ -166,6 +174,18 @@ programaParaSumar  valor1 valor2 = add.(lodv valor1).(sumarValores valor2)
 
 programaParaDividir :: Int -> Int -> Instruccion 
 programaParaDividir numerador denominador = divide.(antesDeDividir numerador denominador)
+
+
+-- Tuvimos dificultades con esta funcion (sabemos que se filtra una lista ingresada y se obtiene una lista <= elementos que la primera (dependiendo de lo ingresado)
+
+depurar listaFunciones = filter acumuladoresYDatosNoVacios listaFunciones 
+
+acumuladoresYDatosNoVacios :: Microprocesador -> Bool
+acumuladoresYDatosNoVacios unMicroprocesador = ((/=0).accessorAcumuladorA) unMicroprocesador && ((/=0).accessorAcumuladorB) unMicroprocesador && ((/=[]).accessorDatos) unMicroprocesador 
+
+
+
+
 
 
 --Pruebas
