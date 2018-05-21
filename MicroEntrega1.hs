@@ -99,7 +99,7 @@ ejecutarPrograma unMicroprocesador = (programa unMicroprocesador) unMicroprocesa
 ifnz :: Instruccion -> Instruccion
 ifnz conjuntoDeInstrucciones unMicroprocesador
    | acumuladorA unMicroprocesador == 0 = unMicroprocesador
-   | otherwise                          = (ejecutarPrograma.conjuntoDeInstrucciones) unMicroprocesador 
+   | otherwise                          = (ejecutarPrograma.cargarPrograma(conjuntoDeInstrucciones)) unMicroprocesador 
 
 memoriaOrdenada :: Microprocesador -> String
 memoriaOrdenada = mostrarComentario.listaOrdenada.accessorDatos
